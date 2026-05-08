@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FastOrder!</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
     <header>
         <nav>
@@ -12,11 +12,11 @@
                 <p>FastOrder</p>
             </div>
             <div>
-                <a href="index.php">Menu</a>
-                <a href="pages/admin.php">Admin</a>
+                <a href="../index.php">Menu</a>
+                <a href="admin.php">Admin</a>
             </div>
             <div>
-                <a href="pages/panier.php"><img src="img/panier.svg" alt="Panier"></a>
+                <a href="panier.php"><img src="../img/panier.svg" alt="Panier"></a>
             </div>
         </nav>
     </header>
