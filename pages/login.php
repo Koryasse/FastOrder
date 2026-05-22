@@ -20,12 +20,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FastOrder!</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
+
+<body>
     <header>
         <nav>
             <div>
@@ -41,18 +44,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </nav>
     </header>
     <main>
-        <h1>Admin Login</h1>
-        <form method="post" action="login.php">
-            <div>
-                <label for="username">Nom d'utilisateur:</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div>
-                <label for="password">Mot de passe:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit">Se connecter</button>
-        </form>
+        <div class="login-container">
+            <h1>Admin Login</h1>
+
+            <?php if (isset($error)): ?>
+                <div class="login-error">
+                    <?= htmlspecialchars($error) ?>
+                </div>
+            <?php endif; ?>
+
+            <form method="post" action="login.php" class="login-form">
+                <div>
+                    <label for="username">Nom d'utilisateur</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+
+                <div>
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <button type="submit">Se connecter</button>
+            </form>
+        </div>
     </main>
     <footer>
         <div>
