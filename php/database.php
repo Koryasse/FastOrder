@@ -1,7 +1,6 @@
 <?php
 
-require_once ROOT . '/php/config-secret.php';
-
+require_once __DIR__ . '/config.php';
 function db() : PDO {
     static $db = null;
 

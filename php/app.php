@@ -1,46 +1,38 @@
 <?php
 session_start();
-require_once ROOT . '/php/database.php';
+require_once __DIR__ . '/database.php';
 
-if($_SESSION["panier"] == null)
+if(!isset($_SESSION["panier"]))
     $_SESSION["panier"] = array();
 
 function selectAll() : array {
-    // Préparer la requête
     $statement = db()->prepare(
         "SELECT *
         FROM Produit"
     );
     
-    // Exécuter la requête
     $statement->execute();
 
-    // Lire tous les enregistrement
     return $statement->fetchAll();
 }
 
 function selectAllCommande() : array {
-    // Préparer la requête
     $statement = db()->prepare(
         "SELECT *
         FROM Commande"
     );
     
-    // Exécuter la requête
     $statement->execute();
 
-    // Lire tous les enregistrement
     return $statement->fetchAll();
 }
 
 function add(string $nom, string $description, int $prix,string $image) : void {
-    // Préparer la requête
     $statement = db()->prepare(
         "INSERT INTO Produit(nom, description, prix, image)
          VALUES(:nom, :description, :prix, :image)"
     );
 
-    // Exécuter la requête avec les paramètres
     $statement->execute([
         'nom' => $nom,
         'description' => $description,
@@ -78,11 +70,9 @@ function update(int $id, string $nom, string $description, int $prix,string $ima
 }
 
 function ajouterAuPanier(int $productId){
-    // Vérifier si le produit existe
     $produit = selectOne($productId);
     if(!$produit) return;
 
-    // Ajouter le produit au panier
     $_SESSION["panier"][$productId] = $produit;
 
 }
@@ -101,9 +91,12 @@ function selectOne(int $id) : array|false {
     return $statement->fetch();
 }
 
+
 function selectProduitDansPanier() : array {
     if(empty($_SESSION["panier"]))
         return array();
+
+    $produits = array();
 
     foreach($_SESSION["panier"] as $item) {
         $produit = selectOne($item["id"]);
@@ -120,29 +113,78 @@ function validerCommande(){
     if(empty($_SESSION["panier"]))
         return;
 
-    // 1. Créer une nouvelle commande
     $statement = db()->prepare(
         "INSERT INTO Commande()
          VALUES()"
     );
     $statement->execute();
 
-    // 2. Récupérer l'ID de la commande
     $commandeId = db()->lastInsertId();
-
-    // 3. Ajouter les produits du panier à la commande
 
     foreach($_SESSION["panier"] as $item) {
         $statement = db()->prepare(
-            "INSERT INTO Commande_Produit(commande_id, produit_id)
-             VALUES(:commande_id, :produit_id)"
+            "INSERT INTO Commande_produit(id_commande, id_produit)
+             VALUES(:id_commande, :id_produit)"
         );
         $statement->execute([
-            'commande_id' => $commandeId,
-            'produit_id' => $item["id"]
+            'id_commande' => $commandeId,
+            'id_produit' => $item["id"]
         ]);
     }
 
-    // 4. Vider le panier
     $_SESSION["panier"] = array();
+}
+
+function checkAdminCredentials(string $username, string $password): bool {
+    if ($username === 'admin' && $password === 'Super') {
+        $_SESSION['admin'] = true;
+        return true;
+    }
+    return false;
+}
+
+function selectProduitsByCommande(int $commandeId) : array {
+    $statement = db()->prepare(
+        "SELECT p.*
+         FROM Produit p
+         JOIN Commande_produit cp ON cp.id_produit = p.id
+         WHERE cp.id_commande = :commande_id"
+    );
+
+    $statement->execute([
+        'commande_id' => $commandeId
+    ]);
+
+    return $statement->fetchAll();
+}
+
+function viderPanier() : void {
+    $_SESSION['panier'] = array();
+}
+
+function retirerDuPanier(int $productId) : void {
+    if (isset($_SESSION['panier'][$productId])) {
+        unset($_SESSION['panier'][$productId]);
+    }
+}
+
+function deleteCommande(int $idCommande) : void {
+
+    $statement = db()->prepare(
+        "DELETE FROM Commande_produit
+         WHERE id_commande = :id"
+    );
+
+    $statement->execute([
+        'id' => $idCommande
+    ]);
+
+    $statement = db()->prepare(
+        "DELETE FROM Commande
+         WHERE id = :id"
+    );
+
+    $statement->execute([
+        'id' => $idCommande
+    ]);
 }
