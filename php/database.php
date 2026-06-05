@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/config.php';
+// fonction de connexion à la base de données
 function db() : PDO {
     static $db = null;
 

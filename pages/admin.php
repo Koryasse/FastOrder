@@ -1,13 +1,16 @@
 <?php
 require_once __DIR__ . '/../php/app.php';
 
+// vérifie si l'utilisateur est connecté en tant qu'admin
 if (!isset($_SESSION['admin']) || $_SESSION['admin'] !== true) {
     header('Location: login.php');
     exit();
 }
 
+// traitement des formulaires
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+    // ajout d'un produit
     if ($_POST['action'] === 'add') {
         add($_POST['nom'], $_POST['description'], (int) $_POST['prix'], $_POST['image']);
         $_SESSION['message'] = 'Produit ajouté !';
@@ -15,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
+    // modification d'un produit
     if ($_POST['action'] === 'edit') {
         $id = (int) $_POST['id'];
         $produit = selectOne($id);
@@ -25,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
+    // suppression d'un produit
     if ($_POST['action'] === 'delete') {
         delete((int) $_POST['id']);
         $_SESSION['message'] = 'Produit supprimé.';
@@ -32,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
+    // suppression d'une commande
     if ($_POST['action'] === 'delete_commande') {
         deleteCommande((int) $_POST['id_commande']);
         $_SESSION['message'] = 'Commande supprimée.';
@@ -40,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// récupération des produits et des commandes
 $produits = selectAll();
 $commandes = selectAllCommande();
 ?>
@@ -141,6 +148,7 @@ $commandes = selectAllCommande();
                 </ul>
             </div>
         </div>
+        <!-- LISTE DES COMMANDES -->
         <div class="commandes">
             <h3>Liste des commandes</h3>
             <div>
@@ -168,7 +176,7 @@ $commandes = selectAllCommande();
                                 <?php endforeach; ?>
                                 <li class="commande-total">
                                     <span>Total:</span>
-                                    <span class="commande-prix">
+                                    <span class="commande-prix" style="font-weight: bold;">
                                         <?= array_sum(array_column(selectProduitsByCommande($commande['id']), 'prix')) ?> CHF
                                     </span>
                                 </li>
@@ -209,6 +217,7 @@ $commandes = selectAllCommande();
 
 <script>
 
+    // gestion de l'affichage des formulaires
     const choseAction = document.getElementById('choseAction');
     choseAction.addEventListener('change', (e) => {
         document.querySelectorAll('.productCrud form').forEach(f => f.style.display = 'none');

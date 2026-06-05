@@ -1,6 +1,10 @@
 <?php
+// auteur : yassine korbi & lucas garcia
+// date : 05.06.2026
+
 require_once 'php/app.php';
 
+// traitement de l'ajout au panier
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['produit_id'])) {
         $produit_id = $_POST['produit_id'];

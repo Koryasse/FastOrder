@@ -1,24 +1,25 @@
 <?php
 require_once __DIR__ . '/../php/app.php';
 
+// traitement des actions du panier
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($_POST['action'])) {
-
+        // vider le panier
         if ($_POST['action'] === 'vider') {
             viderPanier();
             $_SESSION['message'] = 'Panier vidé.';
             header('Location: panier.php');
             exit();
         }
-
+        // retirer un produit
         if ($_POST['action'] === 'retirer') {
             retirerDuPanier((int)$_POST['produit_id']);
             $_SESSION['message'] = 'Produit retiré.';
             header('Location: panier.php');
             exit();
         }
-
+        // valider la commande
         if ($_POST['action'] === 'valider') {
             validerCommande();
             $_SESSION['message'] = 'Commande validée !';
@@ -28,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// récupération des produits dans le panier
 $produits = selectProduitDansPanier();
 $total = array_sum(array_column($produits, 'prix'));
 ?>
