@@ -5,6 +5,7 @@ require_once __DIR__ . '/database.php';
 if(!isset($_SESSION["panier"]))
     $_SESSION["panier"] = array();
 
+// récupération des produits
 function selectAll() : array {
     $statement = db()->prepare(
         "SELECT *
@@ -16,6 +17,7 @@ function selectAll() : array {
     return $statement->fetchAll();
 }
 
+// récupération des commandes
 function selectAllCommande() : array {
     $statement = db()->prepare(
         "SELECT *
@@ -27,6 +29,7 @@ function selectAllCommande() : array {
     return $statement->fetchAll();
 }
 
+// ajout d'un produit
 function add(string $nom, string $description, int $prix,string $image) : void {
     $statement = db()->prepare(
         "INSERT INTO Produit(nom, description, prix, image)
@@ -41,7 +44,7 @@ function add(string $nom, string $description, int $prix,string $image) : void {
     ]);
 }
 
-
+// suppression d'un produit
 function delete(int $id) : void {
     $statement = db()->prepare(
         "DELETE FROM Produit
@@ -53,6 +56,7 @@ $statement->execute([
 ]);
 }
 
+// mise à jour d'un produit
 function update(int $id, string $nom, string $description, int $prix,string $image) : void {
     $statement = db()->prepare(
         "UPDATE Produit
@@ -69,6 +73,7 @@ function update(int $id, string $nom, string $description, int $prix,string $ima
     ]);
 }
 
+// ajout d'un produit au panier
 function ajouterAuPanier(int $productId){
     $produit = selectOne($productId);
     if(!$produit) return;
@@ -77,6 +82,7 @@ function ajouterAuPanier(int $productId){
 
 }
 
+// récupération d'un produit
 function selectOne(int $id) : array|false {
     $statement = db()->prepare(
         "SELECT *
@@ -91,7 +97,7 @@ function selectOne(int $id) : array|false {
     return $statement->fetch();
 }
 
-
+// récupération des produits dans le panier
 function selectProduitDansPanier() : array {
     if(empty($_SESSION["panier"]))
         return array();
@@ -108,7 +114,7 @@ function selectProduitDansPanier() : array {
     return $produits;
 }
 
-
+// validation de la commande
 function validerCommande(){
     if(empty($_SESSION["panier"]))
         return;
@@ -135,6 +141,7 @@ function validerCommande(){
     $_SESSION["panier"] = array();
 }
 
+// vérification des identifiants admin
 function checkAdminCredentials(string $username, string $password): bool {
     if ($username === 'admin' && $password === 'Super') {
         $_SESSION['admin'] = true;
@@ -143,6 +150,7 @@ function checkAdminCredentials(string $username, string $password): bool {
     return false;
 }
 
+// récupération des produits d'une commande
 function selectProduitsByCommande(int $commandeId) : array {
     $statement = db()->prepare(
         "SELECT p.*
@@ -158,16 +166,19 @@ function selectProduitsByCommande(int $commandeId) : array {
     return $statement->fetchAll();
 }
 
+// vider le panier
 function viderPanier() : void {
     $_SESSION['panier'] = array();
 }
 
+// retirer un produit du panier
 function retirerDuPanier(int $productId) : void {
     if (isset($_SESSION['panier'][$productId])) {
         unset($_SESSION['panier'][$productId]);
     }
 }
 
+// suppression d'une commande
 function deleteCommande(int $idCommande) : void {
 
     $statement = db()->prepare(

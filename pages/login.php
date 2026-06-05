@@ -1,11 +1,13 @@
 <?php
 require_once __DIR__ . '/../php/app.php';
 
+// vérifie si l'utilisateur est connecté en tant qu'admin
 if (isset($_SESSION['admin']) && $_SESSION['admin'] === true) {
     header('Location: admin.php');
     exit();
 }
 
+// traitement du formulaire de connexion
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
